@@ -77,6 +77,28 @@ class MarketDataClient:
         # s = m.get_ohlc("AAPL",1,"day","2025-11-03","2025-11-28")
         # print(s)
 
+    def get_previous_day_ohlc(self, symbol):
+        """
+        Docstring for get_previous_day_ohlc
+        
+        :param self: Description
+        :param symbol: Description
+        """
+        try:
+            endpoint = f"{self.base_url}/v2/aggs/ticker/{symbol}/prev?adjusted=true&apiKey={self.api_key}"
+            response = self.session.get(endpoint,timeout=10)
+            data = response.json()
+            logger.info(f"Previous day's ohlc retrieved for {symbol}")
+            return data
+
+        except requests.exceptions.RequestException as e:
+            logger.error(f"Error fetching previous day OHLC for {symbol}: {e}")
+            return []
+
+
+        
+
+
     def get_ticker_snapshot(self,symbol):  #NEED PAID VERSION
         """
         Get current market snapshot for multiple symbols
@@ -124,7 +146,6 @@ class MarketDataClient:
             logger.error(f"Unable to fetch tickers information: {e}")
             return {}
             
-
 m = MarketDataClient(api_key=os.getenv("API_KEY"), base_url= "https://api.massive.com/")
-s = m.get_tickers()
+s = m.get_previous_day_ohlc("AAPL")
 print(s)
