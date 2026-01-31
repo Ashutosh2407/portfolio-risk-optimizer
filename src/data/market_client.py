@@ -99,7 +99,32 @@ class MarketDataClient:
             return data
 
         except requests.exceptions.RequestException as e:
-            logger.error(f"Unable to fetche snapshot for {symbol}: {e}")
+            logger.error(f"Unable to fetch snapshot for {symbol}: {e}")
             return {}
         
+    def get_tickers(self):
+        """
+        Docstring for get_tickers
+        
+        :param self: Description
+        Get ticker information for all tickers.
 
+        """
+        try:
+            endpoint = f"{self.base_url}/v3/reference/tickers?market=stocks&active=true&order=asc&limit=100&sort=ticker&apiKey={self.api_key}"
+            response = self.session.get(endpoint,timeout=10)
+            response.raise_for_status()
+
+            data = response.json()
+            logger.info("Information retrieved for all tickers.")
+
+            return data
+
+        except requests.exceptions.RequestException as e:
+            logger.error(f"Unable to fetch tickers information: {e}")
+            return {}
+            
+
+m = MarketDataClient(api_key=os.getenv("API_KEY"), base_url= "https://api.massive.com/")
+s = m.get_tickers()
+print(s)
