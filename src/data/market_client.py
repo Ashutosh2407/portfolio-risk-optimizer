@@ -146,6 +146,3 @@ class MarketDataClient:
             logger.error(f"Unable to fetch tickers information: {e}")
             return {}
             
-m = MarketDataClient(api_key=os.getenv("API_KEY"), base_url= "https://api.massive.com/")
-s = m.get_previous_day_ohlc("AAPL")
-print(s)
