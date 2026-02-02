@@ -70,7 +70,7 @@ class StreamClient:
         #Subscribe to symbols
         for symbol in self.subscribed:
             subscribe_message = {
-                'type':'subscibe',
+                'type':'subscribe',
                 'symbol': symbol
             }
             ws.send(json.dumps(subscribe_message))
@@ -106,7 +106,7 @@ class StreamClient:
         if self.running and self.ws:
             for symbol in symbols:
                 subscribe_message = {
-                    'type':'subscibe',
+                    'type':'subscribe',
                     'symbol': symbol
                     }  
                 self.ws.send(json.dumps(subscribe_message))
@@ -180,7 +180,8 @@ if __name__ == "__main__":
     )
     
     # Subscribe to symbols
-    portfolio_symbols = ["BINANCE:BTCUSDT"]
+    #portfolio_symbols = ['AAPL', 'GOOGL', 'MSFT', 'TSLA', 'JPM']
+    portfolio_symbols = ['BINANCE:BTCUSDT']
     client.subscribe(portfolio_symbols)
     
     # Start streaming
@@ -194,3 +195,5 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         logger.info("Shutting down...")
         client.stop()
+
+
