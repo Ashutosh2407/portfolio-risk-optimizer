@@ -54,7 +54,7 @@ class StreamClient:
                         "volume":trade.get("v"),
                         "timestamp":datetime.fromtimestamp(trade.get("t")/1000)
                     }
-                    logger.info(f"Trade: {trade_info["symbol"]} @ ${trade_info["price"]}")
+                    logger.info(f"Trade: {trade_info["symbol"]} @ ${trade_info["price"]} @ {trade_info['timestamp']}")
 
         except Exception as e:
             logger.error("Error parsing information: {e}")
