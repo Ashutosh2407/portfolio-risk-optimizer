@@ -185,7 +185,6 @@ if __name__ == "__main__":
     client.subscribe(portfolio_symbols)
     
     # Start streaming
-    print(client.url)
     client.start()
     
     # Keep running (Ctrl+C to stop)

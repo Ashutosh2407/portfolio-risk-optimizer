@@ -11,6 +11,7 @@ import logging
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 from dotenv import load_dotenv
+import pandas as pd
 
 load_dotenv()
 
@@ -145,4 +146,30 @@ class MarketDataClient:
         except requests.exceptions.RequestException as e:
             logger.error(f"Unable to fetch tickers information: {e}")
             return {}
-            
+
+# m = MarketDataClient(api_key=os.getenv("API_KEY"), base_url= "https://api.massive.com/")
+# s = m.get_ohlc("AAPL",1,"day","2025-11-03","2025-11-28")
+# print(s)
+
+def ohlc_to_dataframe(ohlc_data):
+
+    df= pd.DataFrame(ohlc_data['results'])
+    if "t" in df.columns:
+        df['timestamp'] = pd.to_datetime(df['t'],unit='ms')
+        df.set_index("timestamp", inplace=True)
+
+    column_mappings = {
+        "c": "close",
+        "h": "high",
+        "l": "low",
+        "n": "transactions",
+        "o": "open price",
+        "t": "timestamp",
+        "v": "volume",
+        "vw": "volume weighted avg price"
+    }
+    df.rename(columns=column_mappings, inplace=True)
+    return df[["close","high","low","transactions","open price","volume","volume weighted avg price"]]
+
+# d = ohlc_to_dataframe(s)
+# print(d)
