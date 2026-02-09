@@ -8,6 +8,11 @@ load_dotenv()
 
 
 class DatabaseClient():
+    """
+    Establishes connection with the database,
+    initializes schema and
+    adds the ohlc data to the database table.
+    """
     def __init__(self, connection_string = None):
         if not connection_string:
             user = os.getenv('DB_USER', 'portfolio_user')

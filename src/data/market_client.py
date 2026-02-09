@@ -147,9 +147,9 @@ class MarketDataClient:
             logger.error(f"Unable to fetch tickers information: {e}")
             return {}
 
-m = MarketDataClient(api_key=os.getenv("API_KEY"), base_url= "https://api.massive.com/")
-s = m.get_ohlc("AAPL",1,"day","2025-11-03","2025-11-28")
-print(s)
+# m = MarketDataClient(api_key=os.getenv("API_KEY"), base_url= "https://api.massive.com/")
+# s = m.get_ohlc("AAPL",1,"day","2025-11-03","2025-11-28")
+# print(s)
 
 def ohlc_to_dataframe(ohlc_data):
 
@@ -174,5 +174,5 @@ def ohlc_to_dataframe(ohlc_data):
     df["ticker"] = ohlc_data['ticker']
     return df[["ticker","close","high","low","transactions","open price","volume","volume weighted avg price"]]
 
-d = ohlc_to_dataframe(s)
-print(d)
+# d = ohlc_to_dataframe(s)
+# print(d)

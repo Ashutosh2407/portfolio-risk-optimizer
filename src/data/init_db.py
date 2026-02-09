@@ -7,6 +7,10 @@ from db_client import DatabaseClient
 import os
 
 def main():
+    """
+    Driver program for db_client.py
+    
+    """
     print("=" * 50)
     print("DATABASE INITIALIZATION")
     print("=" * 50)
@@ -20,7 +24,7 @@ def main():
     
     print("\n Connecting to database...")
     try:
-        db = DatabaseClient("")
+        db = DatabaseClient()
     except Exception as e:
         print(f"Error connecting to database: {e}")
         return
