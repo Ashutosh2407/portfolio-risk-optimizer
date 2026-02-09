@@ -89,7 +89,7 @@ class DataCollector:
         logger.info(f"  Failed: {fail_count}/{len(symbols)}")
         logger.info("=" * 60)
 
-    def _parse_polygon_response(ohlc_data):
+    def _parse_polygon_response(self,ohlc_data):
 
         df= pd.DataFrame(ohlc_data['results'])
 
