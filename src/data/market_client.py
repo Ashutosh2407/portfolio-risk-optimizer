@@ -57,7 +57,7 @@ class MarketDataClient:
             params = {
                 'adjusted':"true",
                 'sort':"asc",
-                'limit':120
+                'limit':50000
             }
             endpoint = f"{self.base_url}/v2/aggs/ticker/{symbol}/range/{multiplier}/{timespan}/{start_date}/{end_date}?adjusted={params['adjusted']}&sort={params['sort']}&limit={params['limit']}&apikey={self.api_key}"
             print(endpoint)
