@@ -172,7 +172,7 @@ def ohlc_to_dataframe(ohlc_data):
     }
     df.rename(columns=column_mappings, inplace=True)
     df["ticker"] = ohlc_data['ticker']
-    return df[["ticker","close","high","low","transactions","open price","volume","volume weighted avg price"]]
+    return df[["timestamp","ticker","close","high","low","transactions","open price","volume","volume weighted avg price"]]
 
 # d = ohlc_to_dataframe(s)
 # print(d)

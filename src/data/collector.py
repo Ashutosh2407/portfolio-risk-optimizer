@@ -11,6 +11,7 @@ from datetime import datetime, timedelta
 from typing import List
 from market_client import MarketDataClient
 from db_client import DatabaseClient
+import time
 
 from dotenv import load_dotenv
 
@@ -59,7 +60,7 @@ class DataCollector:
                     start_date=start_date.strftime('%Y-%m-%d'),
                     end_date=end_date.strftime('%Y-%m-%d')
                 )
-
+                time.sleep(12)
                 if not data or 'results' not in data:
                     logger.warning(f"No data returned for {symbol}.")
                     fail_count+=1
@@ -67,7 +68,8 @@ class DataCollector:
                 
                 # Parse API response to DataFrame
                 df = self._parse_polygon_response(data)
-
+                # print(df.columns)
+                # print(df.head(5))
                 if df.empty:
                     logger.warning(f"Dataframe empty for {symbol}.")
                     fail_count+=1
@@ -77,6 +79,7 @@ class DataCollector:
                 self.db_client.insert_ohlc_batch(df)
                 logger.info(f"  ✅ Inserted {len(df)} rows for {symbol}")
                 success_count += 1
+                
 
             except Exception as e:
                 logger.error(f"  ❌ Error processing {symbol}: {e}")
@@ -92,27 +95,27 @@ class DataCollector:
     def _parse_polygon_response(self,ohlc_data):
 
         df= pd.DataFrame(ohlc_data['results'])
-
+        
         if "t" in df.columns:
-            df['timestamp'] = pd.to_datetime(df['t'],unit='ms')
-            df.set_index("timestamp", inplace=True)
-
+            df['t'] = pd.to_datetime(df['t'],unit='ms')
+            #df.set_index("timestamp", inplace=True)
+        
         column_mappings = {
-                "ticker":"ticker",
+                "v": "volume",
+                "vw": "volume_weighted_avg_price",
+                "o": "open",
                 "c": "close",
                 "h": "high",
                 "l": "low",
-                "n": "transactions",
-                "o": "open price",
                 "t": "timestamp",
-                "v": "volume",
-                "vw": "volume weighted avg price"
+                "n": "transactions"             
             }
         
         df.rename(columns=column_mappings, inplace=True)
         df["ticker"] = ohlc_data['ticker']    
-        
-        return df[["timestamp","ticker","open price","high","low","close","volume","volume weighted avg price","transactions"]]
+        # print(df.columns)
+        # print(df.head(5))
+        return df[["timestamp","ticker","open","high","low","close","volume","volume_weighted_avg_price","transactions"]]
     
     def collect_single_symbol(self,symbol,years):
         self.collect_historical_ohlc([symbol], years)
@@ -158,7 +161,7 @@ def main():
         # Market Index (for beta calculation)
         'SPY'
     ]
-
+    #remaining_symbols = ['JPM','BAC','WMT','PG','KO','XOM','CVX','CAT','BA','SPY']
     logger.info(f"Portfolio: {len(portfolio_symbols)} symbols")
     logger.info(f"Symbols: {', '.join(portfolio_symbols)}")
 
