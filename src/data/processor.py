@@ -7,7 +7,7 @@ from typing import Iterable,Optional,Sequence
 import numpy as np
 import pandas as pd
 
-from db_client import DatabaseClient
+from src.data.db_client import DatabaseClient
 
 TRADING_DAYS_PER_YEAR = 252
 
