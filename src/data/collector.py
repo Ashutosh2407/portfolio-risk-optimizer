@@ -9,8 +9,8 @@ import logging
 import pandas as pd
 from datetime import datetime, timedelta
 from typing import List
-from src.data.market_client import MarketDataClient
-from src.data.db_client import DatabaseClient
+from market_client import MarketDataClient
+from db_client import DatabaseClient
 import time
 
 from dotenv import load_dotenv

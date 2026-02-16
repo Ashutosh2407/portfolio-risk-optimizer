@@ -1,7 +1,8 @@
 from sqlalchemy import create_engine,text
 from sqlalchemy.orm import sessionmaker
+from typing import Dict, Iterable,Optional,Sequence,Text
 import pandas as pd
-import os
+import os,json
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -48,3 +49,27 @@ class DatabaseClient():
         """Insert OHLC data in batch"""
         df.to_sql('ohlc',self.engine,if_exists = 'append', index = False, method = 'multi')
         print(f"Inserted {len(df)} records in database.")
+
+    def save_optimization_result(self,d: Dict):
+        """Insert optimization data in optimization_results table"""
+        
+        query = text("""
+            INSERT INTO optimization_results (strategy,
+                     expected_annual_return, 
+                     annual_volatility,
+                     sharpe_ratio,
+                     weights)  VALUES
+            (:strategy, :expected_return, :volatility, :sharpe, :weights)
+        """)
+
+        with self.engine.connect() as conn:
+            conn.execute(query, {
+                 'strategy': d['strategy'],
+                 'expected_return': float(d['expected_annual_return']),
+                 'volatility': float(d['annual_volatility']),
+                 'sharpe': float(d['sharpe_ratio']),
+                 'weights': json.dumps(d['weights'])
+            })
+            conn.commit()
+            print("added from db_client")
+

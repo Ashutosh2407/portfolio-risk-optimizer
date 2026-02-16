@@ -49,10 +49,10 @@ class PortfolioOptimizer:
 
         return {
             "strategy": "max_sharpe",
-            "weights":weights,
             "expected_annual_return": perf[0],
             "annual_volatility":perf[1],
-            "sharpe_ratio": perf[2]
+            "sharpe_ratio": perf[2],
+            "weights":weights
         }
     
     def optimize_min_volatility(self, prices:pd.DataFrame)-> Dict:
@@ -71,8 +71,8 @@ class PortfolioOptimizer:
 
         return {
             "strategy": "min_volatility",
-            "weights":weights,
             "expected_annual_return": perf[0],
             "annual_volatility":perf[1],
-            "sharpe_ratio": perf[2]
+            "sharpe_ratio": perf[2],
+            "weights":weights,
         }
