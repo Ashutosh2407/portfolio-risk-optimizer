@@ -1,3 +1,17 @@
+import sys
+import os
+
+# Get the absolute path to the project root
+current_dir = os.path.dirname(os.path.abspath(__file__))
+project_root = os.path.dirname(current_dir)
+
+# Add to path if not already there
+if project_root not in sys.path:
+    sys.path.insert(0, project_root)
+
+print(f"Project root: {project_root}")
+print(f"Python path: {sys.path[:3]}") 
+
 import pytest
 import numpy as np
 import pandas as pd
@@ -14,7 +28,7 @@ class TestRiskMetrics:
         Create sample return data for testing.
         """
         np.random.seed(42)
-        dates = pd.date_range('2023-01-01', period = 252, freq = 'D')
+        dates = pd.date_range('2023-01-01', periods = 252, freq = 'D')
         returns = pd.DataFrame({
             'AAPL':np.random.normal(0.001,0.02,252),
             'GOOGL':np.random.normal(0.0008,0.025,252),
@@ -34,8 +48,8 @@ class TestRiskMetrics:
 
         assert vol > 0, "Volatility must be positive."
 
-    def test_portfolio_volatility_annualized(self,sample_retuens, sample_weights):
-        risk = RiskMetrics(sample_retuens,sample_weights)
+    def test_portfolio_volatility_annualized(self,sample_returns, sample_weights):
+        risk = RiskMetrics(sample_returns,sample_weights)
         vol_daily = risk.portfolio_volatility(annualize=False)
         vol_annualized = risk.portfolio_volatility(annualize=True)
 
@@ -85,7 +99,7 @@ class TestRiskMetrics:
 
     def test_weights_to_sum_to_one(self,sample_returns, sample_weights):
         """Test that weights sum to approximately 1.0"""
-        assert np.close(sum(sample_weights.values()),1.0), "Weights should sum to 1."
+        assert np.isclose(sum(sample_weights.values()),1.0), "Weights should sum to 1."
 
 
 
