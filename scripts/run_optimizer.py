@@ -43,8 +43,8 @@ opt = PortfolioOptimizer()
 res1 = opt.optimize_max_sharpe(out["prices"])
 res2 = opt.optimize_min_volatility(out["prices"])
 
-#print(res1["strategy"], res1["sharpe_ratio"], res1["weights"])
-#print(res2["strategy"], res2["sharpe_ratio"], res2["weights"])
+#print(res1["strategy"], res1["sharpe_ratio"], res1["weights"],res1["expected_annual_return"],res1["annual_volatility"])
+#print(res2["strategy"], res2["sharpe_ratio"], res2["weights"],res2["expected_annual_return"],res2["annual_volatility"])
 
 db.save_optimization_result({
     "strategy":res1["strategy"],
