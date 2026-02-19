@@ -73,3 +73,39 @@ class DatabaseClient():
             conn.commit()
             print("added from db_client")
 
+    def save_backtest_results(self, result):
+        """Insert backtest result data in backtest_results table"""
+        query = text("""INSERT INTO backtest_results 
+                    (strategy,train_period,test_period,train_days,test_days,optimal_weights,
+                     realized_return,realized_volatility,realized_sharpe,max_drawdown,total_return,
+                     benchmark_return,benchmark_volatility,benchmark_sharpe,benchmark_max_drawdown,
+                     benchmark_total_return)
+                     VALUES
+                     (:strategy,:train_period,:test_period,:train_days,:test_days,:optimal_weights,
+                     :realized_return,:realized_volatility,:realized_sharpe,:max_drawdown,:total_return,
+                     :benchmark_return,:benchmark_volatility,:benchmark_sharpe,:benchmark_max_drawdown,
+                     :benchmark_total_return);
+                     """)
+        
+        with self.engine.connect() as conn:
+            conn.execute(query, {
+                "strategy": result["strategy"],
+                "train_period":result["train_period"],
+                "test_period":result["test_period"],
+                "train_days":result["train_days"],
+                "test_days":result["test_days"],
+                "optimal_weights":result["optimal_weights"],
+                "realized_return":result["realized_return"],
+                "realized_volatility":result["realized_volatility"],
+                "realized_sharpe":result["realized_sharpe"],
+                "max_drawdown":result["max_drawdown"],
+                "total_return":result["total_return"],
+                "benchmark_return":result["benchmark_return"],
+                "benchmark_volatility":result["benchmark_volatility"],
+                "benchmark_sharpe":result["benchmark_sharpe"],
+                "benchmark_max_drawdown":result["benchmark_max_drawdown"],
+                "benchmark_total_return":result["benchmark_total_return"]
+            })
+
+            conn.commit()
+            print(f"Inserted Backtest results into DB.")
