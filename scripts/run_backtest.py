@@ -81,7 +81,7 @@ def main():
         # Display results
         print(f"\n📈 OUT-OF-SAMPLE PERFORMANCE ({result['test_days']} trading days)")
         print(f"   Period: {result['test_period']}")
-        print(f"\n   Portfolio Strategy:")
+        print(f"\n   Portfolio Strategy: {strategy}")
         print(f"      Return:     {result['realized_return']*100:>7.2f}%")
         print(f"      Volatility: {result['realized_volatility']*100:>7.2f}%")
         print(f"      Sharpe:     {result['realized_sharpe']:>7.2f}")
@@ -115,6 +115,8 @@ def main():
     print(f"{'Max Drawdown':<20} {results[0]['max_drawdown']*100:>14.2f}% {results[1]['max_drawdown']*100:>14.2f}%")
     print(f"{'Total Return':<20} {results[0]['total_return']*100:>14.2f}% {results[1]['total_return']*100:>14.2f}%")
     print(f"{'='*70}")
+    #print(results[0]['strategy'])
+    # print(results[1])
 
 if __name__ == "__main__":
     main()
