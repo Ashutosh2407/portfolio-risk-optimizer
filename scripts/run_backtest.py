@@ -1,7 +1,9 @@
 """
 Run backtest for portfolio optimization strategies.
 """
+
 import sys
+import numpy as np
 from pathlib import Path
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
@@ -49,7 +51,7 @@ def save_backtest_result(result):
 
 def main():
     # Configuration
-    symbols = ['AAPL', 'GOOGL', 'MSFT', 'AMZN', 'NVDA']
+    symbols = ['AAPL', 'GOOGL', 'MSFT', 'META', 'NVDA','JPM']
 
     print("=" * 70)
     print("PORTFOLIO OPTIMIZATION BACKTEST")
@@ -58,13 +60,13 @@ def main():
 
     # Load data
     print("\n📊 Loading historical data...")
-    processor = MarketDataProcessor()
+    processor = MarketDataProcessor(DatabaseClient())
     data = processor.load_ohlc(symbols)
     prices = processor.price_matrix(data)
     returns = processor.returns_matrix(prices)
     print(f" Loaded {len(returns)} days of data")
 
-    # Run backtests for both strategies
+    #Run backtests for both strategies
     results = []
 
     for strategy in ['max_sharpe', 'min_volatility']:
@@ -73,7 +75,7 @@ def main():
         print(f"{'='*70}")
         
         backtester = Backtester(returns, strategy=strategy)
-        result = backtester.run_backtest(train_period_days=252, max_weight=0.40)
+        result = backtester.run_backtest(train_period_days=252)
         results.append(result)
 
         # Display results
@@ -90,7 +92,7 @@ def main():
         print(f"      Return:     {result['benchmark_return']*100:>7.2f}%")
         print(f"      Volatility: {result['benchmark_volatility']*100:>7.2f}%")
         print(f"      Sharpe:     {result['benchmark_sharpe']:>7.2f}")
-        print(f"      Max DD:     {result['benchmark_max_dd']*100:>7.2f}%")
+        print(f"      Max DD:     {result['benchmark_max_drawdown']*100:>7.2f}%")
         print(f"      Total:      {result['benchmark_total_return']*100:>7.2f}%")
         
         print(f"\n   📊 ALPHA:")
@@ -99,7 +101,7 @@ def main():
         print(f"      Total:      {(result['total_return'] - result['benchmark_total_return'])*100:>7.2f}%")
         
         # Save to database
-        save_backtest_result(result, symbols)
+        #save_backtest_result(result, symbols)
     
     # Summary comparison
     print(f"\n{'='*70}")
@@ -114,5 +116,5 @@ def main():
     print(f"{'Total Return':<20} {results[0]['total_return']*100:>14.2f}% {results[1]['total_return']*100:>14.2f}%")
     print(f"{'='*70}")
 
-if __name__ == "__main+__":
+if __name__ == "__main__":
     main()

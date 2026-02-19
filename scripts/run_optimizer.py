@@ -40,8 +40,8 @@ processor = MarketDataProcessor(db)
 out = processor.run(tickers=symbols)
 
 opt = PortfolioOptimizer()
-res1 = opt.optimize_max_sharpe(out["prices"])
-res2 = opt.optimize_min_volatility(out["prices"])
+res1 = opt.optimize_max_sharpe(out["returns"])
+res2 = opt.optimize_min_volatility(out["returns"])
 
 #print(res1["strategy"], res1["sharpe_ratio"], res1["weights"],res1["expected_annual_return"],res1["annual_volatility"])
 #print(res2["strategy"], res2["sharpe_ratio"], res2["weights"],res2["expected_annual_return"],res2["annual_volatility"])

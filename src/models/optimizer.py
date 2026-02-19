@@ -23,20 +23,20 @@ class PortfolioOptimizer:
     def __init__(self,config: Optional[OptimizerConfig]=None):
         self.config = config or OptimizerConfig()
 
-    def _build_mu_cov_from_prices(self,prices:pd.DataFrame) -> tuple[pd.Series, pd.DataFrame]:
+    def _build_mu_cov(self,returns:pd.DataFrame) -> tuple[pd.Series, pd.DataFrame]:
         #Expected returns from prices
-        mu = expected_returns.mean_historical_return(prices) #Annualized by default
+        mu = expected_returns.mean_historical_return(returns, returns_data=True) #Annualized by default
         #Covariance from Prices
-        S = risk_models.sample_cov(prices) #Annualized By default
+        S = risk_models.sample_cov(returns, returns_data=True) #Annualized By default
         # Alternative:
         # S = CovarianceShrinkage(prices).ledoit_wolf()
         return mu,S
     
-    def optimize_max_sharpe(self, prices: pd.DataFrame) -> Dict:
+    def optimize_max_sharpe(self, returns: pd.DataFrame) -> Dict:
         """
         Tangency portfolio (max Sharpe)
         """
-        mu,S = self._build_mu_cov_from_prices(prices)
+        mu,S = self._build_mu_cov(returns)
         ef =EfficientFrontier(mu,S, weight_bounds=self.config.weight_bounds)
 
         #Constraint: Cap each weight
@@ -55,11 +55,11 @@ class PortfolioOptimizer:
             "weights":weights
         }
     
-    def optimize_min_volatility(self, prices:pd.DataFrame)-> Dict:
+    def optimize_min_volatility(self, returns:pd.DataFrame)-> Dict:
         """
         Minimum volatility portfolio
         """
-        mu, S = self._build_mu_cov_from_prices(prices)
+        mu, S = self._build_mu_cov(returns)
         ef = EfficientFrontier(mu,S, weight_bounds=self.config.weight_bounds)
 
         if self.config.max_weight_per_asset is not None:
