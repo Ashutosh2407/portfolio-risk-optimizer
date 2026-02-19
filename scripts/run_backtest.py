@@ -14,44 +14,12 @@ from src.data.db_client import DatabaseClient
 from sqlalchemy import text
 import json
 
-def save_backtest_result(result):
-    """Save backtest results to database"""
-    db = DatabaseClient()
-
-    query = text("""
-        INSERT INTO  backtest_result 
-                (timestamp,strategy,realized_return,realized_volatility,
-                 realized_sharpe,max_drawdown, total_return, benchmark_return,
-                 benchmark_volatility,benchmark_sharpe,benchmark_max_drawdown,benchmark_total_return,optimal_weights) 
-                 VALUES 
-                 (NOW(),:strategy,:realized_return,:realized_volatility,:realized_sharpe,
-                 :max_drawdown,:total_return,:benchmark_return,:benchmark_volatility,:benchmark_sharpe,
-                 :benchmark_max_drawdown,:benchmark_total_return,:optimal_weights);
-                 RETURNING id;
-                 """)
     
-    with db.engine.connect() as conn:
-        result_id = conn.execute(query, {
-            "strategy": result["strategy"],
-            "realized_return":result["realized_return"],
-            "realized_volatility":result["realized_volatility"],
-            "realized_sharpe":result["realized_sharpe"],
-            "max_drawdown":result["max_drawdown"],
-            "total_return":result["total_return"],
-            "benchmark_return":result["benchmark_return"],
-            "benchmark_volatility":result["benchmark_volatility"],
-            "benchmark_sharpe":result["benchmark_sharpe"],
-            "benchmark_max_drawdown":result["benchmark_max_drawdown"],
-            "benchmark_total_return":result["benchmark_total_return"],
-            "optimal_weights":result["optimal_weights"]
-        })
-        conn.commit()
-        print(f"✅ Saved to database (ID: {result_id})")
-
 
 def main():
     # Configuration
     symbols = ['AAPL', 'GOOGL', 'MSFT', 'META', 'NVDA','JPM']
+    db = DatabaseClient()
 
     print("=" * 70)
     print("PORTFOLIO OPTIMIZATION BACKTEST")
@@ -101,7 +69,7 @@ def main():
         print(f"      Total:      {(result['total_return'] - result['benchmark_total_return'])*100:>7.2f}%")
         
         # Save to database
-        #save_backtest_result(result, symbols)
+        db.save_backtest_results(result = result)
     
     # Summary comparison
     print(f"\n{'='*70}")
