@@ -1,10 +1,7 @@
 from __future__ import annotations
-
 from dataclasses import dataclass
 from typing import Dict,Optional
-
 import pandas as pd
-
 from pypfopt.efficient_frontier import EfficientFrontier
 from pypfopt import expected_returns, risk_models
 
@@ -12,7 +9,7 @@ from pypfopt import expected_returns, risk_models
 class OptimizerConfig:
     risk_free_rate: float = 0.043
     weight_bounds: tuple = (0.0,1.0)
-    max_weight_per_asset: Optional[float] = 0.20 # e.g., cap any single asset at 20%
+    max_weight_per_asset: Optional[float] = 0.30 # e.g., cap any single asset at 30%
 
 
 class PortfolioOptimizer:

@@ -6,8 +6,8 @@ from typing import Iterable,Optional,Sequence
 
 import numpy as np
 import pandas as pd
-
-from src.data.db_client import DatabaseClient
+from .db_client import DatabaseClient
+#from src.data.db_client import DatabaseClient
 
 TRADING_DAYS_PER_YEAR = 252
 
@@ -28,7 +28,7 @@ class MarketDataProcessor:
         self.db = db
         self.config = config or ProcessorConfig()
 
-    def load_ohlc(self,
+    def load_ohlc_from_db(self,
         tickers: Sequence[str],
         start: Optional[str | datetime] = None,
         end: Optional[str | datetime] = None,
@@ -60,7 +60,7 @@ class MarketDataProcessor:
         df = pd.read_sql(query,self.db.engine, parse_dates=["timestamp"])
         return df
     
-    def price_matrix(self, ohlc_long: pd.DataFrame) -> pd.DataFrame:
+    def generate_price_matrix(self, ohlc_long: pd.DataFrame) -> pd.DataFrame:
         """
         Convert long OHLC to wide prices matrix: index=timestamp, columns=symbol, values=close
         
@@ -77,16 +77,16 @@ class MarketDataProcessor:
 
         return prices
     
-    def returns_matrix(self, prices: pd.DataFrame)-> pd.DataFrame:
+    def generate_returns_matrix(self, prices: pd.DataFrame)-> pd.DataFrame:
         """
-        Compute simple returns from prices using pct_change().
+        Compute simple returns from price matrix using pct_change().
         pct_change computes fractional change (e.g., 0.01 = 1%).
         
         """
         returns = prices.pct_change(periods=1).dropna(how="any")
         return returns
     
-    def risk_matrices(self, returns: pd.DataFrame) -> dict:
+    def generate_risk_matrix(self, returns: pd.DataFrame) -> dict:
         """
         Compute correlation and (annualized) covariance from returns.
         
@@ -107,14 +107,14 @@ class MarketDataProcessor:
         End-to-end: DB -> prices -> returns -> cov/corr
     
         """
-        ohlc = self.load_ohlc(tickers=tickers, start=start,end = end)
-        prices = self.price_matrix(ohlc)
-        returns = self.returns_matrix(prices)
-        risk = self.risk_matrices(returns)
+        ohlc = self.load_ohlc_from_db(tickers=tickers, start=start,end = end)
+        prices = self.generate_price_matrix(ohlc)
+        returns = self.generate_returns_matrix(prices)
+        risk = self.generate_risk_matrix(returns)
 
         return {
-            "ohlc_long": ohlc,
-            "prices": prices,
+            #"ohlc_long": ohlc,
+            #"prices": prices,
             "returns": returns,
             **risk,
         }

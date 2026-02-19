@@ -61,9 +61,9 @@ def main():
     # Load data
     print("\n📊 Loading historical data...")
     processor = MarketDataProcessor(DatabaseClient())
-    data = processor.load_ohlc(symbols)
-    prices = processor.price_matrix(data)
-    returns = processor.returns_matrix(prices)
+    data = processor.load_ohlc_from_db(symbols)
+    prices = processor.generate_price_matrix(data)
+    returns = processor.generate_returns_matrix(prices)
     print(f" Loaded {len(returns)} days of data")
 
     #Run backtests for both strategies

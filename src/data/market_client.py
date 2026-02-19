@@ -60,7 +60,6 @@ class MarketDataClient:
                 'limit':50000
             }
             endpoint = f"{self.base_url}/v2/aggs/ticker/{symbol}/range/{multiplier}/{timespan}/{start_date}/{end_date}?adjusted={params['adjusted']}&sort={params['sort']}&limit={params['limit']}&apikey={self.api_key}"
-            print(endpoint)
             response = self.session.get(endpoint,timeout=10)
             response.raise_for_status()
 
@@ -150,29 +149,3 @@ class MarketDataClient:
 # m = MarketDataClient(api_key=os.getenv("API_KEY"), base_url= "https://api.massive.com/")
 # s = m.get_ohlc("AAPL",1,"day","2025-11-03","2025-11-28")
 # print(s)
-
-def ohlc_to_dataframe(ohlc_data):
-
-    df= pd.DataFrame(ohlc_data['results'])
-    
-    if "t" in df.columns:
-        df['timestamp'] = pd.to_datetime(df['t'],unit='ms')
-        df.set_index("timestamp", inplace=True)
-
-    column_mappings = {
-        "ticker":"ticker",
-        "c": "close",
-        "h": "high",
-        "l": "low",
-        "n": "transactions",
-        "o": "open price",
-        "t": "timestamp",
-        "v": "volume",
-        "vw": "volume weighted avg price"
-    }
-    df.rename(columns=column_mappings, inplace=True)
-    df["ticker"] = ohlc_data['ticker']
-    return df[["timestamp","ticker","close","high","low","transactions","open price","volume","volume weighted avg price"]]
-
-# d = ohlc_to_dataframe(s)
-# print(d)
