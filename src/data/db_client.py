@@ -75,6 +75,7 @@ class DatabaseClient():
 
     def save_backtest_results(self, result):
         """Insert backtest result data in backtest_results table"""
+        
         query = text("""INSERT INTO backtest_results 
                     (strategy,train_period,test_period,train_days,test_days,optimal_weights,
                      realized_return,realized_volatility,realized_sharpe,max_drawdown,total_return,
@@ -94,17 +95,17 @@ class DatabaseClient():
                 "test_period":result["test_period"],
                 "train_days":result["train_days"],
                 "test_days":result["test_days"],
-                "optimal_weights":result["optimal_weights"],
-                "realized_return":result["realized_return"],
-                "realized_volatility":result["realized_volatility"],
-                "realized_sharpe":result["realized_sharpe"],
-                "max_drawdown":result["max_drawdown"],
-                "total_return":result["total_return"],
-                "benchmark_return":result["benchmark_return"],
-                "benchmark_volatility":result["benchmark_volatility"],
-                "benchmark_sharpe":result["benchmark_sharpe"],
-                "benchmark_max_drawdown":result["benchmark_max_drawdown"],
-                "benchmark_total_return":result["benchmark_total_return"]
+                "optimal_weights":json.dumps(result["optimal_weights"]),
+                "realized_return":float(result["realized_return"]),
+                "realized_volatility":float(result["realized_volatility"]),
+                "realized_sharpe":float(result["realized_sharpe"]),
+                "max_drawdown":float(result["max_drawdown"]),
+                "total_return":float(result["total_return"]),
+                "benchmark_return":float(result["benchmark_return"]),
+                "benchmark_volatility":float(result["benchmark_volatility"]),
+                "benchmark_sharpe":float(result["benchmark_sharpe"]),
+                "benchmark_max_drawdown":float(result["benchmark_max_drawdown"]),
+                "benchmark_total_return":float(result["benchmark_total_return"])
             })
 
             conn.commit()
