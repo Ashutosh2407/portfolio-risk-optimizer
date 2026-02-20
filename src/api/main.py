@@ -37,9 +37,15 @@ async def results_latest(db: AsyncSession = Depends(get_db)):
 
 #Results History
 @app.get("/results/history")
-async def results_history():
-    pass
-
+async def results_history(limit: int = Query(20,ge=1,le=100), db: AsyncSession = Depends(get_db)):
+    query = text("""
+                SELECT * FROM optimization_results
+                 order by timestamp DESC
+                 LIMIT :limit
+                """)
+    result = await db.execute(query,{"limit":limit})
+    rows= result.mappings().all()
+    return {"results":[dict(r) for r in rows],"count": len(rows)}
 
 #Optimize
 @app.get("/optimize")
