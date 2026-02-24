@@ -66,7 +66,7 @@ class TestRiskMetrics:
         assert var_95 < 0, "VaR should be negative (loss)"
         assert var_99 < 0, "VaR should be negative (loss)"
 
-    def test_var_99_wirse_than_var_95(self, sample_returns, sample_weights):
+    def test_var_99_worse_than_var_95(self, sample_returns, sample_weights):
         risk = RiskMetrics(sample_returns,sample_weights)
         var_95 = risk.value_at_risk(confidence_level=0.95)
         var_99 = risk.value_at_risk(confidence_level=0.99)
@@ -100,6 +100,12 @@ class TestRiskMetrics:
     def test_weights_to_sum_to_one(self,sample_returns, sample_weights):
         """Test that weights sum to approximately 1.0"""
         assert np.isclose(sum(sample_weights.values()),1.0), "Weights should sum to 1."
+
+    def test_max_drawdown_is_negative(self,sample_returns,sample_weights):
+        risk = RiskMetrics(sample_returns,sample_weights)
+        max_drawdown = risk.maximum_drawdown()
+        assert max_drawdown < 0, "Maximum Drawdown must be negative."
+
 
 
 
