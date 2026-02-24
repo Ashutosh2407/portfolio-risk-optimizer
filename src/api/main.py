@@ -1,5 +1,6 @@
 from fastapi import FastAPI, Depends, Query, HTTPException
 from fastapi.exceptions import RequestValidationError
+from fastapi.concurrency import run_in_threadpool
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import text
 from typing import List, Optional, Dict
@@ -11,6 +12,7 @@ from .processor import get_processor
 from ..models.backtest import Backtester
 from ..models.optimizer import PortfolioOptimizer
 from ..models.risk import RiskMetrics
+from ..models.backtest import Backtester
 from ..data.db_client import DatabaseClient
 from ..data.processor import MarketDataProcessor
 
@@ -136,6 +138,34 @@ async def risk(
 
 #Backtest
 @app.get("/backtest")
-async def backtest():
-    pass
+async def backtest(
+    tickers: List[str] = Query(...),
+    weights: List[float] =Query(...),
+    strategy:Strategy =Strategy.max_sharpe,
+    processor:MarketDataProcessor = Depends(get_processor)
+    ):
+
+    if len(tickers) != len(weights):
+        raise HTTPException(422, "symbols and weights must have equal length")
+    if abs(sum(weights) - 1.0) > 1e-4:
+        raise HTTPException(422, "weights must sum to 1.0")
+    
+    weights_dict = dict(zip(tickers,weights))
+    # Build returns DataFrame
+    result = await run_in_threadpool(processor.run,tickers)
+    returns = result["returns"]
+    if returns is None or returns.empty:
+        raise HTTPException(status_code=404, detail="No returns data found for requested tickers.")
+    
+    backtester = Backtester(returns_data=returns,strategy=strategy)
+    res = await run_in_threadpool(backtester.run_backtest)
+    await run_in_threadpool(db.save_backtest_results,res)
+
+    return res
+    
+
+
+
+
+    
 
