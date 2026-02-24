@@ -2,7 +2,7 @@ from fastapi import FastAPI, Depends, Query, HTTPException
 from fastapi.exceptions import RequestValidationError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import text
-from typing import List, Optional
+from typing import List, Optional, Dict
 from enum import Enum
 from pydantic import BaseModel, Field
 from .database import get_db
@@ -61,7 +61,7 @@ class Strategy(str, Enum):
 class OptimizeModelResponse(BaseModel):
     tickers: List[str]
     strategy: Strategy
-    weights: List[float] = Field(...,description="Portfolio weight assigned with symbols.")
+    weights: Dict[str,float]
     objective_value: Optional[float] = None
     timestamp: Optional[str] = None
 
@@ -86,14 +86,53 @@ async def optimize(
         result = optimizer.optimize_min_volatility(processor_result["returns"])
         
     d_weights = result["weights"]
-    weights = [d_weights[clean_ticker] for clean_ticker in clean_tickers]
-    return OptimizeModelResponse(tickers=clean_tickers,strategy= strategy, weights=weights)
+    #weights = [d_weights[clean_ticker] for clean_ticker in clean_tickers]
+    return OptimizeModelResponse(tickers=clean_tickers,strategy= strategy, weights=d_weights)
+
+class RiskResponseModel(BaseModel):
+    tickers: List[str]
+    weights: Dict[str,float]
+    volatility: Optional[float] = None
+    max_drawdown: Optional[float] = None
+    var_95: Optional[float] = None
+    cvar: Optional[float] = None
+
 
 
 #Risk
-@app.get("/risk")
-async def risk():
-    pass
+@app.get("/risk", response_model=RiskResponseModel)
+async def risk(
+    tickers: List[str] = Query(...),
+    weights: List[float] = Query(..., description="Repeat: ?weights=0.5&weights=0.5, must sum to 1.0"),
+    processor: MarketDataProcessor = Depends(get_processor),
+    ):
+    #Validate lenghts match
+    if len(tickers) != len(weights):
+        raise HTTPException(status_code=422, detail="Symbols and weights must have equal length.")
+
+    if abs(sum(weights)-1.0) > 1e-4:
+        raise HTTPException(status_code=422, detail=f"Weights must sum up to 1.0,got {sum(weights):.6f}")
+    
+    weights_dict = dict(zip(tickers,weights))
+
+    #Build returns dataframe via Processor
+    result = processor.run(tickers)
+    returns = result["returns"]
+
+    risk_metrics = RiskMetrics(returns=returns, weights=weights_dict)
+    volatility = risk_metrics.portfolio_volatility()
+    cvar = risk_metrics.conditional_var()
+    max_drawdown = risk_metrics.maximum_drawdown()
+    var_95 = risk_metrics.value_at_risk()
+
+    return RiskResponseModel(tickers = tickers,
+                             weights=weights_dict,
+                             volatility = volatility,
+                             max_drawdown=max_drawdown,
+                             var_95=var_95,
+                             cvar=cvar)
+    
+
 
 #Backtest
 @app.get("/backtest")
