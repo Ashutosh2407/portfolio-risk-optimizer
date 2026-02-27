@@ -22,26 +22,6 @@ class TestRiskMetrics:
     Unit test for Risk calculations.
     """
 
-    @pytest.fixture
-    def sample_returns(self):
-        """
-        Create sample return data for testing.
-        """
-        np.random.seed(42)
-        dates = pd.date_range('2023-01-01', periods = 252, freq = 'D')
-        returns = pd.DataFrame({
-            'AAPL':np.random.normal(0.001,0.02,252),
-            'GOOGL':np.random.normal(0.0008,0.025,252),
-            'AAPL':np.random.normal(0.0012,0.018,252)
-        }, index=dates)
-
-        return returns
-    
-    @pytest.fixture
-    def sample_weights(self):
-        """Portfolio sample weights"""
-        return {'AAPL':0.3,'GOOGL':0.5,'MSFT':0.2}
-    
     def test_portfolio_volatility_positive(self,sample_returns,sample_weights):
         risk = RiskMetrics(sample_returns,sample_weights)
         vol = risk.portfolio_volatility()

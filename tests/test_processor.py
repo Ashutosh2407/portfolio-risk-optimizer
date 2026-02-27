@@ -10,36 +10,14 @@ if project_root not in sys.path:
     sys.path.insert(0, project_root)
 
 from src.data.processor import MarketDataProcessor, ProcessorConfig
-from src.data.db_client import DatabaseClient
-from unittest.mock import MagicMock
 import numpy as np
-import pandas as pd
 import pytest
 
 class TestProcessor:
     """
     Unit Test for Processor
     """
-    @pytest.fixture
-    def sample_prices(self):
-        """
-        Create sample prices for testing.
-        """
-        np.random.seed(42)
-        rng = np.random.default_rng()
-        dates = pd.date_range('2023-01-01', periods = 252, freq = 'D')
-        prices = pd.DataFrame({
-            'AAPL':rng.integers(1,500,252),
-            'GOOGL':rng.integers(1,500,252),
-            'MSFT':rng.integers(1,500,252)
-        }, index = dates)
-
-        return prices
     
-    @pytest.fixture
-    def mock_db(self):
-        db = MagicMock(spec=DatabaseClient)
-        return db
     
     @pytest.fixture
     def processor(self,mock_db):

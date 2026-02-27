@@ -15,17 +15,6 @@ import pytest
 from src.models.optimizer import PortfolioOptimizer
 
 class Testoptimizer:
-    @pytest.fixture
-    def sample_returns(self):
-        np.random.seed(42)
-        dates = pd.date_range('2023-01-01', periods=252, freq='B')
-        returns = pd.DataFrame({
-            'AAPL': np.random.normal(0.001,0.02,252),
-            'MSFT': np.random.normal(0.001,0.02,252),
-            'JPM': np.random.normal(0.001,0.02,252),
-            'GS': np.random.normal(0.001,0.02,252),
-        },index=dates)
-        return returns
     
     @pytest.fixture
     def sample_optimizer(self):

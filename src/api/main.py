@@ -21,7 +21,6 @@ app = FastAPI(title = "Portfolio Risk Optimizer API",
               version="1.0.0"
               )
 
-db = DatabaseClient()
 
 #Health Check
 @app.get("/")
@@ -142,9 +141,8 @@ async def backtest(
     tickers: List[str] = Query(...),
     weights: List[float] =Query(...),
     strategy:Strategy =Strategy.max_sharpe,
-    processor:MarketDataProcessor = Depends(get_processor)
-    ):
-
+    processor:MarketDataProcessor = Depends(get_processor),
+    db:DatabaseClient = Depends(get_db)):
     if len(tickers) != len(weights):
         raise HTTPException(422, "symbols and weights must have equal length")
     if abs(sum(weights) - 1.0) > 1e-4:
