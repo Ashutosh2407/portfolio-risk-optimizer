@@ -114,7 +114,8 @@ async def risk(
     if abs(sum(weights)-1.0) > 1e-4:
         raise HTTPException(status_code=422, detail=f"Weights must sum up to 1.0,got {sum(weights):.6f}")
     
-    weights_dict = dict(zip(tickers,weights))
+    clean_tickers = [t.strip().upper() for t in tickers if t and t.strip()]
+    weights_dict = dict(zip(clean_tickers,weights))
 
     #Build returns dataframe via Processor
     result = processor.run(tickers)
