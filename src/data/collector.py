@@ -12,16 +12,12 @@ from typing import List
 from .market_client import MarketDataClient
 from .db_client import DatabaseClient
 import time
-
+from src.utils.logger import get_logger
 from dotenv import load_dotenv
 
 load_dotenv()
 
-logging.basicConfig(
-    level = logging.INFO,
-    format = '%(asctime)s - %(leveltime)s - %(message)s'
-)
-logger = logging.getLogger(__name__)
+logger = get_logger(__name__)
 
 class DataCollector:
     """

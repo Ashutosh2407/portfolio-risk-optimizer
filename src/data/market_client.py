@@ -12,11 +12,10 @@ from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 from dotenv import load_dotenv
 import pandas as pd
-
+from src.utils.logger import get_logger
 load_dotenv()
 
-logging.basicConfig(level = logging.INFO)
-logger = logging.getLogger(__name__)
+logger = get_logger(__name__)
 
 class MarketDataClient:
     """Client for fetching market data through various endpoints."""
@@ -111,7 +110,7 @@ class MarketDataClient:
         """
         try:
             endpoint = f"{self.base_url}/v2/snapshot/locale/us/markets/stocks/tickers/{symbol}?apiKey={self.api_key}"
-            print(endpoint)
+            #print(endpoint)
             response = self.session.get(endpoint,timeout = 10)
             response.raise_for_status()
 

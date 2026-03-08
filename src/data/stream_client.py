@@ -6,11 +6,11 @@ from typing import Callable,List, Optional
 from datetime import datetime
 import time
 from dotenv import load_dotenv
+from src.utils.logger import get_logger
 
 load_dotenv()
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+logger = get_logger(__name__)
 
 class StreamClient:
     """WebSocket client for real-time trade data from Finnhub"""

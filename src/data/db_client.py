@@ -4,9 +4,11 @@ from typing import Dict, Iterable,Optional,Sequence,Text
 import pandas as pd
 import os,json
 from dotenv import load_dotenv
+from src.utils.logger import get_logger
 
 load_dotenv()
 
+logger = get_logger(__name__)
 
 class DatabaseClient():
     """
@@ -42,13 +44,13 @@ class DatabaseClient():
                         if "already_exists" not in str(e):
                             print(f"{e}")
 
-        print("Tables created successfully.")
+        logger.info("Tables created successfully.")
 
 
     def insert_ohlc_batch(self, df):
         """Insert OHLC data in batch"""
         df.to_sql('ohlc',self.engine,if_exists = 'append', index = False, method = 'multi')
-        print(f"Inserted {len(df)} records in database.")
+        logger.info(f"Inserted {len(df)} records in database.")
 
     def save_optimization_result(self,d: Dict):
         """Insert optimization data in optimization_results table"""
@@ -71,7 +73,7 @@ class DatabaseClient():
                  'weights': json.dumps(d['weights'])
             })
             conn.commit()
-            print("added from db_client")
+            logger.info("added from db_client")
 
     def save_backtest_results(self, result):
         """Insert backtest result data in backtest_results table"""
@@ -109,4 +111,4 @@ class DatabaseClient():
             })
 
             conn.commit()
-            print(f"Inserted Backtest results into DB.")
+            logger.info(f"Inserted Backtest results into DB.")

@@ -5,6 +5,9 @@ Run this once to create all tables
 
 from db_client import DatabaseClient
 import os
+from src.utils.logger import get_logger
+
+logger = get_logger(__name__)
 
 def main():
     """
@@ -12,7 +15,7 @@ def main():
     
     """
     print("=" * 50)
-    print("DATABASE INITIALIZATION")
+    logger.info("DATABASE INITIALIZATION")
     print("=" * 50)
 
     #CHECK IF SCHEMA FILE EXISTS
@@ -22,30 +25,28 @@ def main():
         print(f"❌ Schema file not found: {schema_file}")
         return
     
-    print("\n Connecting to database...")
+    logger.info("\n Connecting to database...")
     try:
         db = DatabaseClient()
     except Exception as e:
-        print(f"Error connecting to database: {e}")
+        logger.info(f"Error connecting to database: {e}")
         return
 
-    print("Connected successfully")
+    logger.info("Connected successfully")
     
-    print("\nCreating tables...")
+    logger.info("\nCreating tables...")
 
     try:
         db.initialize_schema(schema_file)
-        print("Schema Initializer...")
+        logger.info("Schema Initializer...")
     except Exception as e:
-        print(f"Could not initialize schema: {e}")
+        logger.info(f"Could not initialize schema: {e}")
         return
     
     print("\n" + "=" * 50)
-    print("✅ DATABASE READY!")
+    logger.info("✅ DATABASE READY!")
     print("=" * 50)
-    print("\nNext steps:")
-    print("1. Run: python src/data/collector.py")
-    print("2. This will backfill historical data")
+    
 
 if __name__ == "__main__":
     main()
