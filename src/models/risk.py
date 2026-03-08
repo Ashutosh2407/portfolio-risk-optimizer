@@ -1,5 +1,8 @@
 import numpy as np
 import pandas as pd
+from src.utils.logger import get_logger
+
+logger = get_logger(__name__)
 
 class RiskMetrics:
     """
@@ -29,7 +32,8 @@ class RiskMetrics:
         """
         if self.weights is None:
             raise ValueError("Weights required for Portfolio VaR.")
-        
+        logger.info(f"VAR: {np.percentile(self.portfolio_returns,(1-confidence_level)*100)
+}")
         return np.percentile(self.portfolio_returns,(1-confidence_level)*100)
 
     
@@ -62,7 +66,7 @@ class RiskMetrics:
         cumulative = (1+self.portfolio_returns).cumprod()
         running_max = cumulative.cummax()
         drawdown = (cumulative-running_max)/running_max
-
+        logger.info(f"Maximum Drawdown:{drawdown.min()}")
         return drawdown.min()
     
 
@@ -83,7 +87,7 @@ class RiskMetrics:
 
         if annualize:
             vol *= np.sqrt(252)
-
+        logger.info(f"Volatility:{vol}")
         return vol
 
     
