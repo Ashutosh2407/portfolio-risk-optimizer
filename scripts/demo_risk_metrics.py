@@ -20,6 +20,7 @@ from src.data.collector import DataCollector
 from src.data.processor import MarketDataProcessor
 from src.data.db_client import DatabaseClient
 
+
 def demo_risk_metrics():
     """Demonstrate risk metrics calculation"""
     
