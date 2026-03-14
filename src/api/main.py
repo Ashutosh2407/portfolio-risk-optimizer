@@ -6,9 +6,9 @@ from sqlalchemy import text
 from typing import List, Optional, Dict
 from enum import Enum
 from pydantic import BaseModel, Field
-from .database import get_db
-from .optimizer import get_optimizer
-from .processor import get_processor
+from src.api.database import get_db
+from src.api.optimizer import get_optimizer
+from src.api.processor import get_processor
 from ..models.backtest import Backtester
 from ..models.optimizer import PortfolioOptimizer
 from ..models.risk import RiskMetrics
