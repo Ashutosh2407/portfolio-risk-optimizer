@@ -9,6 +9,7 @@ from pydantic import BaseModel, Field
 from src.api.database import get_db
 from src.api.optimizer import get_optimizer
 from src.api.processor import get_processor
+from src.api.database_client import get_db_client
 from ..models.backtest import Backtester
 from ..models.optimizer import PortfolioOptimizer
 from ..models.risk import RiskMetrics
@@ -23,6 +24,8 @@ app = FastAPI(title = "Portfolio Risk Optimizer API",
 
 logger = get_logger(__name__)
 
+
+
 #Health Check
 @app.get("/")
 async def health_check():
@@ -36,8 +39,6 @@ async def get_tickers(db: AsyncSession = Depends(get_db)):
     query = text("""Select DISTINCT ticker from ohlc order by ticker""")
     result = await db.execute(query)
     return {"tickers":[row[0] for row in result.fetchall()]}
-
-
 
 
 #Latest Results
@@ -89,7 +90,9 @@ async def optimize(
     tickers: List[str] = Query(...,min_length=1,description="Repeat param: ?tickers=AAPL&tickers=MSFT&tickers=JPM&tickers=BAC&tickers=V&tickers=GS"),
     strategy: Strategy = Strategy.max_sharpe,
     processor: MarketDataProcessor = Depends(get_processor),
-    optimizer: PortfolioOptimizer = Depends(get_optimizer)
+    optimizer: PortfolioOptimizer = Depends(get_optimizer),
+    db: AsyncSession = Depends(get_db),
+    db_client: DatabaseClient = Depends(get_db_client)
 ):
     clean_tickers = [t.strip().upper() for t in tickers if t and t.strip()]
     logger.info(f"Optimization requested | tickers={clean_tickers} | strategy={strategy}")
@@ -105,6 +108,7 @@ async def optimize(
         elif strategy == Strategy.min_vol:
             result = optimizer.optimize_min_volatility(processor_result["returns"])
         logger.info(f"Optimization complete | strategy={strategy} | tickers={clean_tickers}")
+        db_client.save_optimization_result(result)
         d_weights = result["weights"]
         #weights = [d_weights[clean_ticker] for clean_ticker in clean_tickers]
         return OptimizeModelResponse(tickers=clean_tickers,strategy= strategy, weights=d_weights)

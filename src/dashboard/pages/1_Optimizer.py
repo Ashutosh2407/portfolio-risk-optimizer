@@ -4,6 +4,8 @@ from api_client import run_optimizer
 from api_client import get_tickers
 import plotly.express as px
 
+
+
 st.set_page_config(page_title="Optimizer",
                    page_icon="⚙️",
                    layout = "wide")
