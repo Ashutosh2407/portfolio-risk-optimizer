@@ -1,6 +1,7 @@
 #params: Tickers and Strategy
 import streamlit as st
 from api_client import run_optimizer
+from api_client import get_tickers
 import plotly.express as px
 
 st.set_page_config(page_title="Optimizer",
@@ -11,9 +12,9 @@ st.title("Optimization")
 st.markdown("Enter the list of tickers and the strategy to generate optimal portfolio.")
 
 #Inputs
-tickers_input = st.text_input("Enter tickers (comma separated)",
-                              value = "AAPL, MSFT, GOOGL, GS, JPM"
-                              )
+tickers_list = get_tickers()["tickers"]
+selected_tickers = st.multiselect("Select Tickers", options=tickers_list)
+
 
 strategy = st.selectbox(
     "Strategy",
@@ -24,7 +25,7 @@ strategy = st.selectbox(
 
 #Run Button
 if st.button("Run", type= "primary"):
-    tickers = [t.strip().upper() for t in tickers_input.split(",") if t.strip()]
+    tickers = [t.strip().upper() for t in selected_tickers if t.strip()]
     if len(tickers) < 4:
         st.error("Please enter at least 4 stocks in your portfolio.")
     else:

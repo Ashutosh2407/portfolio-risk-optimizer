@@ -29,6 +29,17 @@ async def health_check():
     logger.info("Healthcheck called.")
     return {"status": "ok"}
 
+#Get list of tickers
+@app.get('/tickers')
+async def get_tickers(db: AsyncSession = Depends(get_db)):
+    logger.info("Getting available tickers in the database.")
+    query = text("""Select DISTINCT ticker from ohlc order by ticker""")
+    result = await db.execute(query)
+    return {"tickers":[row[0] for row in result.fetchall()]}
+
+
+
+
 #Latest Results
 @app.get("/results/latest")
 async def results_latest(db: AsyncSession = Depends(get_db)):
@@ -156,10 +167,6 @@ async def risk(
     except Exception as e:
         logger.error(f"Risk calculation failed | tickers={tickers} | error={e}", exc_info=True)
         raise HTTPException(status_code=500, detail=str(e))
-
-
-
-    
 
 
 #Backtest

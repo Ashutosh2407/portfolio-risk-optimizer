@@ -2,6 +2,14 @@ import requests
 
 base_url = "http://localhost:8000"
 
+def get_tickers():
+    try:
+        response = requests.get(f"{base_url}/tickers")
+        if response.status_code == 200:
+            return response.json()
+    except requests.exceptions.ConnectionError:
+         {"error": "Could not connect to API. "}
+
 def get_latest_result():
     try:
         response = requests.get(f"{base_url}/results/latest")
