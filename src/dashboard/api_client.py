@@ -38,7 +38,7 @@ def run_optimizer(tickers:list,strategy:str = "max_sharpe"):
         return {"error": e}
 
 def get_risk(tickers:list, weights: list):
-    params = [("tickers",t) for t in tickers] + [(weights,w) for w in weights]
+    params = [("tickers",t) for t in tickers] + [("weights",float(w)) for w in weights]
     try:
         response = requests.get(f"{base_url}/risk", params=params)
         if response.status_code == 200:
