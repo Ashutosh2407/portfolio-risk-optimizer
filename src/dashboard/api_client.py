@@ -46,4 +46,11 @@ def get_risk(tickers:list, weights: list):
     except requests.exceptions.ConnectionError as e:
         return {"error": e}
 
-
+def get_backtest(tickers:list,strategy:str):
+    params = [("tickers",t) for t in tickers] + [("strategy", strategy)]
+    try:
+        response = requests.get(f"{base_url}/backtest", params=params)
+        if response.status_code == 200:
+            return response.json()
+    except requests.exceptions.ConnectionError as e:
+        return {"error":e}

@@ -177,31 +177,23 @@ async def risk(
 @app.get("/backtest")
 async def backtest(
     tickers: List[str] = Query(...),
-    weights: List[float] =Query(...),
     strategy:Strategy =Strategy.max_sharpe,
     processor:MarketDataProcessor = Depends(get_processor),
-    db:DatabaseClient = Depends(get_db)):
+    db:AsyncSession = Depends(get_db),
+    db_client: DatabaseClient = Depends(get_db_client)):
     logger.info(f"Backtest requested | tickers={tickers} | strategy={strategy}")
-
-    if len(tickers) != len(weights):
-        logger.warning("Tickers/weights length mismatch in backtest")
-        raise HTTPException(422, "symbols and weights must have equal length")
-    if abs(sum(weights) - 1.0) > 1e-4:
-        logger.warning(f"Weights do not sum to 1.0 in backtest | sum={sum(weights):.6f}")
-        raise HTTPException(422, "weights must sum to 1.0")
-    
-    try:
-        weights_dict = dict(zip(tickers,weights))
+  
     # Build returns DataFrame
+    try:
         result = await run_in_threadpool(processor.run,tickers)
         returns = result["returns"]
         if returns is None or returns.empty:
             logger.warning(f"No returns data found for tickers={tickers}")
             raise HTTPException(status_code=404, detail="No returns data found for requested tickers.")
-    
+        
         backtester = Backtester(returns_data=returns,strategy=strategy)
         res = await run_in_threadpool(backtester.run_backtest)
-        await run_in_threadpool(db.save_backtest_results,res)
+        await run_in_threadpool(db_client.save_backtest_results,res)
         logger.info(f"Backtest complete and saved | tickers={tickers} | strategy={strategy}")
         return res
     
@@ -210,6 +202,7 @@ async def backtest(
     except Exception as e:
         logger.error(f"Backtest failed | tickers={tickers} | strategy={strategy} | error={e}", exc_info=True)
         raise HTTPException(status_code=500, detail=str(e))
+    
 
 
     
