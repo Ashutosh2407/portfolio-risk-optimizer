@@ -108,15 +108,15 @@ pytest tests/ -v
 
 ### 📁 Project Structure
 portfolio-optimizer/
-├── src/
-│   ├── api/          # FastAPI app, endpoints
-│   ├── models/       # optimizer, risk, backtest
-│   ├── data/         # collector, processor, db_client
-│   ├── monitoring/   # metrics
-│   └── utils/        # logger
-├── tests/
-├── notebooks/
-├── docker-compose.yml
-├── Dockerfile
-├── requirements.txt
-└── .env.example
+1) src/
+    a) api/          # FastAPI app, endpoints
+    b) models/       # optimizer, risk, backtest
+    c) data/         # collector, processor, db_client
+    d) monitoring/   # metrics
+    e) utils/        # logger
+2) tests/
+3) notebooks/
+4) docker-compose.yml
+5) Dockerfile
+6) requirements.txt
+7) .env.example

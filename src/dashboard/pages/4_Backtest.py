@@ -84,3 +84,74 @@ if st.button(label="Run Backtest", type="primary"):
     })
     st.dataframe(comparison_df, use_container_width=True, hide_index=True)
     st.divider()
+
+#Cumulative Returns Chart ----------------------------
+    st.subheader("Cumulative Returns Chart")
+    cum_portfolio = pd.Series(result["cumulative_returns"])
+    cum_benchmark = pd.Series(result["benchmark_cumulative"])
+    cum_portfolio.index = pd.to_datetime(cum_portfolio.index)
+    cum_benchmark.index = pd.to_datetime(cum_benchmark.index)
+
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(
+        x = cum_portfolio.index,
+        y = cum_portfolio.values,
+        name="Strategy",
+        line=dict(color="#00CC96", width=2)
+    ))
+    fig.add_trace(go.Scatter(
+        x = cum_benchmark.index,
+        y = cum_benchmark.values,
+        name = "Benchmark (Equal Weight)",
+        line = dict(color="#EF553B", width=2, dash="dash")
+    ))
+    fig.update_layout(
+        xaxis_title="Date",
+        yaxis_title="Cumulative Return (1=starting Value)",
+        hovermode="x unified",
+        legend=dict(orientation="h",yanchor="bottom", y=1.02)
+    )
+    fig.add_hline(y=1.0,line_dash="dot", line_color="gray",
+                 annotation_text="Starting Value")
+    st.plotly_chart(fig,use_container_width=True)
+
+    st.divider()
+
+    #---Drawdown Chart-----------------------
+    st.subheader("📉 Drawdown")
+
+    running_max = cum_portfolio.cummax()
+    drawdown = (cum_portfolio-running_max)/running_max
+
+    fig_dd = go.Figure()
+    fig_dd.add_trace(go.Scatter(
+        x=drawdown.index,
+        y=drawdown.values,
+        fill="tozeroy",
+        name="Drawdown",
+        line = dict(color = "#EF553B"),
+        fillcolor="rgba(239,85,59,0.3)"
+    ))
+    fig_dd.update_layout(
+        xaxis_title="Date",
+        yaxis_title="Drawdown",
+        yaxis_tickformat = ".0%",
+        hovermode = "x unified"
+    )
+    st.plotly_chart(fig_dd, use_container_width=True)
+
+    #-----Optimal Weights-----------------
+    st.subheader("⚖️ Trained Optimal Weights")
+    weights = result.get("optimal_weights",{})
+    if weights:
+        fig_w = px.bar(
+            x=list(weights.keys()),
+            y=list(weights.values()),
+            labels = {"x":"Ticker","y":"Weight"},
+            text_auto=".0%",
+            color=list(weights.keys())
+        )
+        fig_w.update_layout(yaxis_tickformat=".0%", showlegend=False)
+        st.plotly_chart(fig_w, use_container_width=True)
+
+
