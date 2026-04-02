@@ -109,11 +109,11 @@ pytest tests/ -v
 ### 📁 Project Structure
 portfolio-optimizer/
 1) src/. 
-    a) api/         # FastAPI app, endpoints. 
-    b) models/       # optimizer, risk, backtest. 
-    c) data/         # collector, processor, db_client. 
-    d) monitoring/   # metrics. 
-    e) utils/        # logger. 
+    a) api/         # FastAPI app, endpoints.\
+    b) models/       # optimizer, risk, backtest.\
+    c) data/         # collector, processor, db_client. \
+    d) monitoring/   # metrics. \
+    e) utils/        # logger. \
 2) tests/
 3) notebooks/
 4) docker-compose.yml
