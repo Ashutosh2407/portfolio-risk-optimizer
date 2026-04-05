@@ -85,7 +85,7 @@ class Backtester:
         print(f"   Optimizing on training data...")
         if self.strategy == 'max_sharpe':
             result = self.optimizer.optimize_max_sharpe(train_data)
-        elif self.strategy == "min_volatility":
+        elif self.strategy == "min_volatility" or self.strategy == "min_vol":
             result = self.optimizer.optimize_min_volatility(train_data)
         else:
             raise ValueError(f"Unknown strategy: {self.strategy}.")
