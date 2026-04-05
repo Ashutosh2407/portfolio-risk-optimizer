@@ -32,8 +32,7 @@ class RiskMetrics:
         """
         if self.weights is None:
             raise ValueError("Weights required for Portfolio VaR.")
-        logger.info(f"VAR: {np.percentile(self.portfolio_returns,(1-confidence_level)*100)
-}")
+        logger.info(f"VAR: {np.percentile(self.portfolio_returns,(1-confidence_level)*100)}")
         return np.percentile(self.portfolio_returns,(1-confidence_level)*100)
 
     

@@ -43,15 +43,15 @@ if st.button(label="Run Backtest", type="primary"):
     st.subheader("Performance Summary")
     col1,col2,col3,col4 = st.columns(4)
     col1.metric("Total Return", 
-                f"{result["total_return"]:.2%}",
-                delta = f"{(result["realized_return"]-result["benchmark_return"]):.2%} vs Benchmark")
+                f"{result['total_return']:.2%}",
+                delta = f"{(result['realized_return']-result['benchmark_return']):.2%} vs Benchmark")
     col2.metric("Sharpe Ratio",
-                f"{result["realized_sharpe"]:.2f}",
-                delta=f"{(result["realized_sharpe"] - result["benchmark_sharpe"]):.2f} vs Benchmark")
+                f"{result['realized_sharpe']:.2f}",
+                delta=f"{(result['realized_sharpe'] - result['benchmark_sharpe']):.2f} vs Benchmark")
     col3.metric(
         "Volatility",
         f"{result['realized_volatility']:.2f}",
-        delta=f"{result["realized_volatility"]-result["benchmark_volatility"]:.2%} vs Benchmark",
+        delta=f"{result['realized_volatility']-result['benchmark_volatility']:.2%} vs Benchmark",
         delta_color="inverse"
     )
     col4.metric(
