@@ -99,7 +99,7 @@ if st.button("Calculate Risk Metrics", type="primary"):
         st.subheader("Risk Metrics")
 
         col1,col2,col3,col4 = st.columns(4)
-        col1.metric("Portfolio Volatility", f"{result["volatility"]:.2%}",
+        col1.metric("Portfolio Volatility", f"{result['volatility']:.2%}",
                     help="Annualized standard deviation of portfolio returns.")
         col2.metric("VaR (95%)", f"{result['var_95']:.2%}",
                     help="Maximum expected daily loss at 95% confidence.")
