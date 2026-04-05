@@ -16,13 +16,20 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    env:
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_HOST: localhost
+      DB_PORT: 5432
+      DB_NAME: test_db
+
     services:
       postgres:
         image: postgres:15
         env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: test_db
+          DB_USER: postgres           
+          DB_PASSWORD: postgres                  
+          postgres_DB: test_db       
         ports:
           - 5432:5432
         options: >-
@@ -31,9 +38,7 @@ jobs:
           --health-timeout 5s
           --health-retries 5
 
-    env:
-      DATABASE_URL: postgresql+asyncpg://postgres:postgres@localhost:5432/test_db
-
+    
     steps:
     - uses: actions/checkout@v4
     - name: Set up Python 3.11
