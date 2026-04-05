@@ -54,7 +54,7 @@ jobs:
 
     - name: Create tables                                            
       run: |
-        PGPASSWORD=postgres psql -h localhost -U postgres -d test_db -f schema.sql
+        PGPASSWORD=postgres psql -h localhost -U postgres -d test_db -f src/data/schema.sql
 
     - name: Lint with flake8
       run: |
