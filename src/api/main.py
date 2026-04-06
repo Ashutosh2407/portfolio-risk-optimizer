@@ -10,12 +10,15 @@ from src.api.database import get_db
 from src.api.optimizer import get_optimizer
 from src.api.processor import get_processor
 from src.api.database_client import get_db_client
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from apscheduler.triggers.cron import CronTrigger
 from ..models.backtest import Backtester
 from ..models.optimizer import PortfolioOptimizer
 from ..models.risk import RiskMetrics
 from ..models.backtest import Backtester
 from ..data.db_client import DatabaseClient
 from ..data.processor import MarketDataProcessor
+from ..data.collector import DataCollector
 from ..utils.logger import get_logger
 
 app = FastAPI(title = "Portfolio Risk Optimizer API",
@@ -23,6 +26,31 @@ app = FastAPI(title = "Portfolio Risk Optimizer API",
               )
 
 logger = get_logger(__name__)
+
+scheduler = AsyncIOScheduler()
+
+portfolio_symbols = [
+        # Tech (25%)
+        'AAPL', 'GOOGL', 'MSFT', 'NVDA', 'META',
+        
+        # Finance (20%)
+        'JPM', 'BAC', 'V', 'GS',
+        
+        # Healthcare (15%)
+        'JNJ', 'UNH', 'PFE',
+        
+        # Consumer (15%)
+        'WMT', 'PG', 'KO',
+        
+        # Energy (10%)
+        'XOM', 'CVX',
+        
+        # Industrial (10%)
+        'CAT', 'BA',
+        
+        # Market Index (for beta calculation)
+        'SPY'
+    ]
 
 
 
