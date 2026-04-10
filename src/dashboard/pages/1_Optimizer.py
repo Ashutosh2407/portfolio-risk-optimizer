@@ -3,8 +3,7 @@ import streamlit as st
 from api_client import run_optimizer
 from api_client import get_tickers
 import plotly.express as px
-
-
+import requests
 
 st.set_page_config(page_title="Optimizer",
                    page_icon="⚙️",
@@ -14,9 +13,15 @@ st.title("Optimization")
 st.markdown("Enter the list of tickers and the strategy to generate optimal portfolio.")
 
 #Inputs
-tickers_list = get_tickers()["tickers"]
-selected_tickers = st.multiselect("Select Tickers", options=tickers_list)
+try:
+   tickers_list = get_tickers() 
+   tickers_list = tickers_list["tickers"]
+except requests.exceptions.RequestException as e:
+    st.error(f"Unable to fetch tickers information: {e}")
+    st.stop()
+    
 
+selected_tickers = st.multiselect("Select Tickers", options=tickers_list)
 
 strategy = st.selectbox(
     "Strategy",

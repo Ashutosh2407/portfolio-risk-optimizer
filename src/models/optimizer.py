@@ -39,11 +39,13 @@ class PortfolioOptimizer:
         #Constraint: Cap each weight
         if self.config.max_weight_per_asset is not None:
             ef.add_constraint(lambda w: w <= self.config.max_weight_per_asset)
+        try:
+            ef.max_sharpe(risk_free_rate=self.config.risk_free_rate)
+            weights = ef.clean_weights() # rounds/clips near-zeros
+            perf = ef.portfolio_performance(verbose= False, risk_free_rate=self.config.risk_free_rate) #(ret,vol,sharpe)
+        except:
+            return "Solver cannot solve under current constraints."
         
-        ef.max_sharpe(risk_free_rate=self.config.risk_free_rate)
-        weights = ef.clean_weights() # rounds/clips near-zeros
-        perf = ef.portfolio_performance(verbose= False, risk_free_rate=self.config.risk_free_rate) #(ret,vol,sharpe)
-
         return {
             "strategy": "max_sharpe",
             "expected_annual_return": perf[0],

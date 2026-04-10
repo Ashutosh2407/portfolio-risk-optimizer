@@ -1,14 +1,17 @@
 import requests
+import os 
 
-base_url = "http://localhost:8000"
+base_url = os.getenv("base_url","http://localhost:8000")
 
 def get_tickers():
     try:
         response = requests.get(f"{base_url}/tickers")
-        if response.status_code == 200:
-            return response.json()
+        response.raise_for_status()
+        return response.json()
     except requests.exceptions.ConnectionError:
-         {"error": "Could not connect to API. "}
+        raise requests.exceptions.ConnectionError("Could not connect to API.")
+    except requests.exceptions.HTTPError:
+        raise requests.exceptions.HTTPError(f"API returned an error.")
 
 def get_latest_result():
     try:
@@ -22,10 +25,12 @@ def get_latest_result():
 def get_results_history(limit=20):
     try:
         response = requests.get(f"{base_url}/results/history", params={"limit":limit})
-        if response.status_code == 200:
-            return response.json()
+        response.raise_for_status()
+        return response.json()
     except requests.exceptions.ConnectionError as e:
-        return {"error": e}
+        raise requests.exceptions.ConnectionError("Connection Error.")
+    except requests.exceptions.HTTPError as e:
+        raise requests.exceptions.HTTPError("HTTP Error.")
 
 def run_optimizer(tickers:list,strategy:str = "max_sharpe"):
     params = [("tickers",t) for t in tickers]
@@ -50,7 +55,9 @@ def get_backtest(tickers:list,strategy:str):
     params = [("tickers",t) for t in tickers] + [("strategy", strategy)]
     try:
         response = requests.get(f"{base_url}/backtest", params=params)
-        if response.status_code == 200:
-            return response.json()
+        response.raise_for_status()
+        return response.json()
     except requests.exceptions.ConnectionError as e:
-        return {"error":e}
+        raise requests.exceptions.ConnectionError("Connection Error.")
+    except requests.exceptions.HTTPError as e:
+        raise requests.exceptions.HTTPError("HTTP Error.")

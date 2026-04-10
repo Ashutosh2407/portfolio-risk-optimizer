@@ -3,6 +3,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 import pandas as pd
 from api_client import get_tickers,get_backtest
+import requests
 
 st.set_page_config(page_title="Backtest",page_icon="📉", layout="wide")
 
@@ -10,7 +11,12 @@ st.title("Walk-Forward Backtest")
 st.markdown("Train on historical data, test on out-of-sample period, compare against equal-weight benchmark.")
 
 #Inputs----------------------------------------------------------
-available_tickers = get_tickers()
+try:
+    available_tickers = get_tickers()
+except requests.exceptions.RequestException as e:
+    st.error("Cannot fetch Tickers.")
+    st.stop()
+
 if isinstance(available_tickers,dict) and "error" in available_tickers:
     st.error("Could not find tickers.")
     st.stop()
@@ -30,11 +36,12 @@ if len(selected_tickers) <4:
 #Run Backtest---------------------------------------
 if st.button(label="Run Backtest", type="primary"):
     with st.spinner("Running walk-forward backtest... this may take a few seconds."):
-        result = get_backtest(tickers=selected_tickers,strategy=strategy)
-    
-    if "optimal_weights" not in result:
-        st.error("Backtest Failed.")
-        st.stop()
+        try:
+            result = get_backtest(tickers=selected_tickers,strategy=strategy)
+            weights = result["optimal_weights"]
+        except:
+            st.error("Backtest Failed.")
+            st.stop()
 
     st.success(f"Backtest complete | Train Period: {result.get('train_period', 'N/A')} | Test Period: {result.get('test_period', 'N/A')}")
     st.divider()
