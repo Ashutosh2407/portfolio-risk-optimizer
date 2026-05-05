@@ -88,7 +88,7 @@ uvicorn src.api.main:app --reload
 | GET    | /backtest        | Run walk-forward backtest  |
 | GET    | /results/latest  | Latest optimization result |
 | GET    | /results/history | All past optimizations     |
-| GET    | /metrics         | Prometheus metrics         |
+<!--| GET    | /metrics         | Prometheus metrics         | -->
 
 Full docs available at /docs (Swagger UI) when the API is running.
 
