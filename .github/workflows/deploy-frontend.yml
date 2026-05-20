@@ -16,7 +16,8 @@ env:
   ECR_REPOSITORY: portfolio/dashboard
   ECS_SERVICE: portfolio-dashboard-task-service
   ECS_CLUSTER: portfolio-cluster
-  CONTAINER_NAME: portfolio-dashboard-task
+  CONTAINER_NAME: portfolio-dashboard
+  TASK_DEFINITION: portfolio-dashboard-task
 
 jobs:
   build-and-deploy:
