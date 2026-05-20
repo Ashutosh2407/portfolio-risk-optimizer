@@ -5,7 +5,7 @@ on:
     branches: [main]
     paths:
       - 'src/dashboard/**'
-      - 'Dockerfile.frontend'
+      - 'Dockerfile.streamlit'
 
 permissions:
   id-token: write
@@ -40,7 +40,7 @@ jobs:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           IMAGE_TAG: ${{ github.sha }}
         run: |
-          docker build -f Dockerfile.frontend \
+          docker build -f Dockerfile.streamlit \
             -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG \
             -t $ECR_REGISTRY/$ECR_REPOSITORY:latest .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
