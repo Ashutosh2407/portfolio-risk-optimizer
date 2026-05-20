@@ -11,10 +11,11 @@ database = os.getenv('DB_NAME', 'portfolio_data')
 
 DATABASE_URL = f"postgresql+asyncpg://{user}:{password}@{host}:{port}/{database}"
 
-USE_SSL = os.getenv("USE_SSL","true").lower() == "true"
+cert_path = '/app/global-bundle.pem'
+USE_SSL = os.getenv("USE_SSL","true").lower() == "true" and os.path.exists(cert_path)
 
 if USE_SSL:
-    cert_path = '/app/global-bundle.pem'
+    
     ssl_context = ssl.create_default_context()
     if os.path.exists(cert_path):
         ssl_context.load_verify_locations(cert_path)
