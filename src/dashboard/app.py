@@ -6,7 +6,7 @@ st.set_page_config(page_title="Portfolio Optimizer",
                    page_icon="📈",
                    layout = "wide")
 
-st.title("📈 portfolio Risk Optimizer")
+st.title("📈 padtfolio Risk Optimizer")
 
 st.divider()
 
