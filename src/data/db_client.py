@@ -5,6 +5,7 @@ import pandas as pd
 import os,json
 from dotenv import load_dotenv
 from src.utils.logger import get_logger
+import ssl
 
 load_dotenv()
 
@@ -23,10 +24,17 @@ class DatabaseClient():
             host = os.getenv('DB_HOST', 'localhost')
             port = os.getenv('DB_PORT', '5432')
             database = os.getenv('DB_NAME', 'portfolio_data')
-
+            cert_path = '/app/global-bundle.pem'
+            USE_SSL = os.getenv("USE_SSL", "true").lower() == "true" and os.path.exists(cert_path)
             connection_string = f"postgresql://{user}:{password}@{host}:{port}/{database}"
 
-        self.engine = create_engine(connection_string,connect_args={"sslmode": "verify-full", "sslrootcert": "/app/global-bundle.pem"})
+            if USE_SSL:
+                ssl_context = ssl.create_default_context()
+                ssl_context.load_verify_locations(cert_path)
+            else:
+                ssl_context = None
+
+        self.engine = create_engine(connection_string,connect_args={"ssl": ssl_context} if ssl_context else {})
         self.Session = sessionmaker(bind=self.engine)
 
     def initialize_schema(self, schema_file):
