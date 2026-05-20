@@ -1,6 +1,7 @@
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
 import os
+import ssl
 
 user = os.getenv('DB_USER', 'portfolio_user')
 password = os.getenv('DB_PASSWORD', 'portfolio_pass')
@@ -10,7 +11,13 @@ database = os.getenv('DB_NAME', 'portfolio_data')
 
 DATABASE_URL = f"postgresql+asyncpg://{user}:{password}@{host}:{port}/{database}"
 
-engine = create_async_engine(DATABASE_URL)
+ssl_context = ssl.create_default_context()
+ssl_context.load_verify_locations('/app/global-bundle.pem')
+
+engine = create_async_engine(
+    DATABASE_URL,
+    connect_args = {"ssl":ssl_context}  
+)
 
 AsyncSessionLocal = sessionmaker(engine, class_ = AsyncSession, expire_on_commit= False)
 

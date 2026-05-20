@@ -4,6 +4,7 @@ Backfills OHLC data from Polygon API into Timescale DB.
 
 """
 
+
 import os
 import logging
 import pandas as pd

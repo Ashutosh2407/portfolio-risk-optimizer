@@ -26,7 +26,7 @@ class DatabaseClient():
 
             connection_string = f"postgresql://{user}:{password}@{host}:{port}/{database}"
 
-        self.engine = create_engine(connection_string)
+        self.engine = create_engine(connection_string,connect_args={"sslmode": "verify-full", "sslrootcert": "/app/global-bundle.pem"})
         self.Session = sessionmaker(bind=self.engine)
 
     def initialize_schema(self, schema_file):

@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS ohlc (
 );
 
 
-SELECT create_hypertable('ohlc', 'timestamp', if_not_exists => TRUE);
+--SELECT create_hypertable('ohlc', 'timestamp', if_not_exists => TRUE);
 
 CREATE INDEX IF NOT EXISTS idx_symbol_time ON ohlc (ticker, timestamp DESC);
 
@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS optimization_results (
 );
 
 -- Convert to hypertable for time-series optimization
-select create_hypertable('optimization_results','timestamp',if_not_exists => TRUE);
+--select create_hypertable('optimization_results','timestamp',if_not_exists => TRUE);
 
 -- Create indexes for common queries
 CREATE INDEX IF NOT EXISTS idx_optimization_strategy ON optimization_results(strategy);
@@ -56,7 +56,7 @@ CREATE TABLE IF NOT EXISTS backtest_results(
 );
 
 -- Convert to hypertable for time-series optimization
-select create_hypertable('backtest_results', 'timestamp',if_not_exists => TRUE);
+--select create_hypertable('backtest_results', 'timestamp',if_not_exists => TRUE);
 
 -- Create indexes for common queries
 CREATE INDEX IF NOT EXISTS idx_backtest_result_strategy ON backtest_results(strategy);
