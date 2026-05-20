@@ -2,7 +2,7 @@
 
 A production-grade quantitative finance platform that optimizes stock portfolios using Modern Portfolio Theory, calculates risk metrics, and runs walk-forward backtests, served via a REST API and interactive dashboard.
 
-**Live Demo:** [Coming Soon] | **API Docs:** [Coming Soon]
+**Live Demo:** effrontier.io
 
 ---
 
